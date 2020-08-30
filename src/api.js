@@ -1,12 +1,11 @@
 import axios from 'axios'
 
-//const SERVER_URL = "http://csse-s365.canterbury.ac.nz:4001/api/v1";
-const SERVER_URL = " http://localhost:4941/api/v1";
+const SERVER_URL = " https://petitionserver.herokuapp.com/api/v1";
 console.log(SERVER_URL);
 
 const axiosInstance = axios.create({
   baseURL: SERVER_URL,
-  timeout: 1000
+  timeout: 10000
 });
 
 export default {

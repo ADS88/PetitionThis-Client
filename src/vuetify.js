@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuetify from "vuetify";
-import "vuetify/dist/vuetify.min.css"; // Add Ythis line
+import "vuetify/dist/vuetify.min.css";
 
 Vue.use(Vuetify);
 const opts = {
