@@ -117,7 +117,6 @@
 
 <script>
   import api from "../api";
-  import router from "../routes";
 
   export default {
     name: "Profile",
@@ -132,6 +131,7 @@
         ],
         userId: sessionStorage.getItem("userId"),
         profile: {},
+        originalProfile: {},
         currentPassword: "",
         newPassword: "",
         isEditing: false,
@@ -173,9 +173,14 @@
             this.error = true})
       },
       createRequest(){
-        let editRequest = {
-          "name": this.profile.name,
-          "email": this.profile.email
+        let editRequest = {}
+
+        if(this.profile.name !== this.originalProfile.name){
+          editRequest.name = this.profile.name
+        }
+
+        if(this.profile.email !== this.originalProfile.email){
+          editRequest.email = this.profile.email
         }
 
         if (this.profile.city) {
@@ -204,7 +209,9 @@
       getProfile(){
         api.getUser()
           .then((response) => {
-            this.profile = response.data;
+            this.profile = response.data
+            let originalProfile = {...response.data}
+            this.originalProfile = originalProfile
           })
       },
       getProfilePicture(){
