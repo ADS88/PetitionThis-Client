@@ -18,7 +18,7 @@
             <span>{{action.name}}</span>
           </v-btn>
         </span>
-        <v-btn v-if="store.getters.getAuthenticationStatus" @click="logout">Logout</v-btn>
+        <v-btn class="mx-2" v-if="store.getters.getAuthenticationStatus" @click="logout">Logout</v-btn>
       </div>
     </v-toolbar>
 
@@ -43,7 +43,7 @@
               <v-list-item-title>{{action.name}}</v-list-item-title>
             </v-list-item>
           </div>
-          <v-list-item v-if="store.getters.getAuthenticationStatus" @click="logout">
+          <v-list-item v-if="store.getters.getAuthenticationStatus" @click="logout" large>
             <v-list-item-title>Logout</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
