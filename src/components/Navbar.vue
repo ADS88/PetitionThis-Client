@@ -9,25 +9,16 @@
       <v-spacer></v-spacer>
       <v-app-bar-nav-icon class="hidden-md-and-up" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <div class="hidden-sm-and-down">
-        <div v-if="store.getters.getAuthenticationStatus">
-          <v-btn text to="/CreatePetition">
-            <span>Create Petition</span>
+        <span v-for="action in actions">
+          <v-btn
+            class="mx-2"
+            v-if="action.showWhenLoggedIn === store.getters.getAuthenticationStatus"
+            :key="action.name"
+            :to="action.to">
+            <span>{{action.name}}</span>
           </v-btn>
-          <v-btn text class="mx-3" to="/Profile">
-            <span>Profile</span>
-          </v-btn>
-          <v-btn text @click="logout" to="/">
-            <span>Logout</span>
-          </v-btn>
-        </div>
-        <div v-else>
-          <v-btn text class="mx-3" to="/Login">
-            <span>Log in</span>
-          </v-btn>
-          <v-btn text to="/Register">
-            <span>Sign up</span>
-          </v-btn>
-        </div>
+        </span>
+        <v-btn v-if="store.getters.getAuthenticationStatus" @click="logout">Logout</v-btn>
       </div>
     </v-toolbar>
 
@@ -45,18 +36,16 @@
           v-model="group"
           active-class="deep-purple--text text--accent-4"
         >
-          <v-list-item>
-            <v-list-item-title>Create Petition</v-list-item-title>
+          <div v-for="action in actions">
+            <v-list-item
+              :to="action.to"
+              v-if="action.showWhenLoggedIn === store.getters.getAuthenticationStatus">
+              <v-list-item-title>{{action.name}}</v-list-item-title>
+            </v-list-item>
+          </div>
+          <v-list-item v-if="store.getters.getAuthenticationStatus" @click="logout">
+            <v-list-item-title>Logout</v-list-item-title>
           </v-list-item>
-
-          <v-list-item>
-            <v-list-item-title>Profile</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item>
-            <v-list-item-title>Log out</v-list-item-title>
-          </v-list-item>
-
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
@@ -67,9 +56,6 @@
 
   import store from "../index";
   import router from "../routes";
-  // import Vuex from 'vuex';
-  // import Vue from "vue";
-  // Vue.use(Vuex)
 
   export default {
     name: "Navbar",
@@ -78,6 +64,12 @@
         store: store,
         drawer: false,
         group: null,
+        actions: [
+          {name: "Create Petition", to: "/CreatePetition", showWhenLoggedIn: true},
+          {name: "Profile", to: "/Profile", showWhenLoggedIn: true},
+          {name: "Register", to: "/Register", showWhenLoggedIn: false},
+          {name: "Login", to: "/Login", showWhenLoggedIn: false}
+        ]
       }
     },
     methods: {

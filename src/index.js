@@ -23,7 +23,7 @@ export default new Vuex.Store({
   },
   getters: {
     getAuthenticationStatus: state => {
-      return state.authenticationStatus
+      return !(state.authenticationStatus === null || state.authenticationStatus === false);
     },
     getUserId: state => {
       return state.userId
