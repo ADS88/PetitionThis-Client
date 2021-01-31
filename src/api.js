@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const SERVER_URL = " https://petitionserver.herokuapp.com/api/v1";
+//const SERVER_URL = " https://petitionserver.herokuapp.com/api/v1";
+const SERVER_URL = "http://localhost:4941/api/v1"
 console.log(SERVER_URL);
 
 const axiosInstance = axios.create({
@@ -24,6 +25,14 @@ export default {
       'X-Authorization': sessionStorage.getItem("token")
     }
   }),
+  addPetitionImageAWS: (id, imageFormData) => {
+    alert('attempting to upload aws photo')
+    axiosInstance.put(`/petitions/${id}/awsphoto`, imageFormData, {
+    headers: {
+      //'Content-Type': image.type,
+      'X-Authorization': sessionStorage.getItem("token")
+    }
+  })},
   getUserImage: () => axiosInstance.get(`/users/${sessionStorage.getItem("userId")}/photo`),
   addUserImage: (image) => axiosInstance.put(`/users/${sessionStorage.getItem("userId")}/photo`, image, {
     headers: {

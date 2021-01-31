@@ -8,7 +8,7 @@
             dark
             flat
           >
-            <v-toolbar-title>Create petition</v-toolbar-title>
+            <v-toolbar-title>Create Petition</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-tooltip bottom>
             </v-tooltip>
@@ -154,7 +154,9 @@
         api.signPetition(petitionId)
       },
       addPetitionImage(petitionId) {
-        api.addPetitionImage(petitionId, this.image)
+        const formData = new FormData()
+        formData.append('image', this.image)
+        api.addPetitionImageAWS(petitionId, formData)
         .then(() => router.push('/'))
       },
       onFilePicked(event) {
