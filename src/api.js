@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-//const SERVER_URL = " https://petitionserver.herokuapp.com/api/v1";
-const SERVER_URL = "http://localhost:4941/api/v1"
+const SERVER_URL = " https://petitionserver.herokuapp.com/api/v1";
+//const SERVER_URL = "http://localhost:4941/api/v1"
 console.log(SERVER_URL);
 
 const axiosInstance = axios.create({
