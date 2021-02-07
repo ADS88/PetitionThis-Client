@@ -52,7 +52,7 @@
               type="file"
               style="display:none"
               ref="fileInput"
-              accept="image/png,image/jpeg,image/gif"
+              accept="image/jpeg"
               @change="onFilePicked">
 
             <div v-if="imageUrl !==''">
@@ -115,7 +115,7 @@
       onPickFile() {
         this.$refs.fileInput.click()
       },
-      submitPetition() {
+      async submitPetition() {
         if (!this.valid) {
           this.errorMessage = "Please fill in all required fields"
           this.hasError = true
@@ -137,27 +137,22 @@
         api.createPetition(petition)
           .then((response) => {
             const petitionId = response.data.petitionId
-            this.signPetition(response.data.petitionId)
-            this.addPetitionImage(response.data.petitionId)
-
-            //router.push('/')
+            this.signPetition(petitionId)
+            this.addPetitionImage(petitionId)
           })
-          .catch((error) => {
-            this.errorMessage = "Error registering user"
-            if (error.response.statusText) {
-              this.errorMessage = error.response.statusText
-            }
+          .catch(() => {
+            this.errorMessage = "Error creating petition"
             this.hasError = true
           })
       },
       signPetition(petitionId) {
         api.signPetition(petitionId)
       },
-      addPetitionImage(petitionId) {
+      async addPetitionImage(petitionId) {
         const formData = new FormData()
         formData.append('image', this.image)
-        api.addPetitionImageAWS(petitionId, formData)
-        .then(() => router.push('/'))
+        await api.addPetitionImageAWS(petitionId, formData)
+        router.push('/')
       },
       onFilePicked(event) {
         console.log("file picked")

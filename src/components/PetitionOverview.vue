@@ -25,13 +25,14 @@
 
 <script>
   import api from "../api";
+  import awsRootUrl from "../awsRootUrl";
 
   export default {
     name: "PetitionOverview",
     props: ["petition"],
     computed: {
       imageUrl: function () {
-        return this.rootUrl + "/petitions/" + this.petition.petitionId + "/photo"
+        return `${awsRootUrl}/petition${this.petition.petitionId}.jpg`
       }
     },
     data() {

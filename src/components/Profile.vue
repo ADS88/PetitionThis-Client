@@ -52,12 +52,11 @@
                 type="file"
                 style="display:none"
                 ref="fileInput"
-                accept="image/png,image/jpeg,image/gif"
+                accept="image/jpeg"
                 @change="onFilePicked">
 
               <div>
                 <v-img
-                  v-if="hasProfilePicture"
                   max-height="150"
                   max-width="150"
                   class="white--text align-end"
@@ -66,20 +65,10 @@
                 >
                 </v-img>
 
-                <v-img
-                  v-else
-                  max-height="150"
-                  max-width="150"
-                  class="white--text align-end"
-                  src="https://ramcotubular.com/wp-content/uploads/default-avatar.jpg"
-                >
-                </v-img>
-
                 <br>
               </div>
 
               <v-btn v-if="isEditing" color="primary" text @click="onPickFile">Change profile picture</v-btn>
-              <v-btn color="error" v-if="isEditing && hasProfilePicture" text @click="removeProfilePicture">Remove profile picture</v-btn>
 
               <div v-if="isEditing">
                 <br>
@@ -117,6 +106,7 @@
 
 <script>
   import api from "../api";
+  import awsRootUrl from "../awsRootUrl";
 
   export default {
     name: "Profile",
@@ -140,14 +130,12 @@
         showPassword: false,
         errorMessage: "Error saving edited profile",
         image: null,
-        hasProfilePicture: false,
         changedProfilePicture: false,
-        imageUrl: api.SERVER_URL + "/users/" + sessionStorage.getItem("userId") + "/photo"
+        imageUrl: `${awsRootUrl}/user${sessionStorage.getItem("userId")}.jpg`
       }
     },
     mounted() {
       this.getProfile()
-      this.getProfilePicture()
     },
     methods: {
       saveChanges() {
@@ -158,10 +146,15 @@
         }
 
         const editRequest = this.createRequest()
+        this.updateProfilePicture()
+        if (Object.keys(editRequest).length === 0) {
+          this.isEditing = false
+          this.error = false
+          return
+        }
         api.editUser(editRequest)
           .then(() => {
             this.isEditing = false;
-            this.updateProfilePicture()
             this.error = false
             this.getProfile()
           })
@@ -214,22 +207,17 @@
             this.originalProfile = originalProfile
           })
       },
-      getProfilePicture(){
-        api.getUserImage()
-          .then(() => this.hasProfilePicture = true)
-          .catch(() => this.hasProfilePicture = false)
-      },
+      //Fix this to use AWS
       updateProfilePicture(){
         if(this.changedProfilePicture){
-          if(this.image === null){
-            api.removeUserImage()
-          } else {
-            api.addUserImage(this.image)
+            const formData = new FormData()
+            const userId = sessionStorage.getItem("userId")
+            formData.append('image', this.image)
+            api.addUserImageAWS(userId, formData)
           }
-        }
       },
       cancelChanges() {
-        this.imageUrl = api.SERVER_URL + "/users/" + sessionStorage.getItem("userId") + "/photo"
+        this.imageUrl = `${awsRootUrl}/user${sessionStorage.getItem("userId")}.jpg`
         this.isEditing = false;
         this.error = false
         this.getProfile()
@@ -247,17 +235,10 @@
         fileReader.readAsDataURL(files[0])
         this.image = files[0]
         this.changedProfilePicture = true
-        this.hasProfilePicture = true
       },
       onPickFile() {
         this.$refs.fileInput.click()
       },
-      removeProfilePicture(){
-        this.imageUrl = "";
-        this.image = null;
-        this.changedProfilePicture = true;
-        this.hasProfilePicture = false;
-      }
     }
   }
 

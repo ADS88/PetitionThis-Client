@@ -15,6 +15,7 @@
 
 <script>
   import api from "../api";
+  import awsRootUrl from "../awsRootUrl";
 
   export default {
     name: "Signature",
@@ -27,7 +28,7 @@
     },
     computed: {
       imageUrl: function () {
-        return `${this.rootUrl}/users/${this.signature.signatoryId}/photo`
+        return `${awsRootUrl}/user${this.signature.signatoryId}.jpg`
       },
       location: function () {
         let location = "";

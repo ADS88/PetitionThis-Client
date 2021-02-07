@@ -26,13 +26,17 @@ export default {
     }
   }),
   addPetitionImageAWS: (id, imageFormData) => {
-    alert('attempting to upload aws photo')
     axiosInstance.put(`/petitions/${id}/awsphoto`, imageFormData, {
     headers: {
-      //'Content-Type': image.type,
       'X-Authorization': sessionStorage.getItem("token")
     }
   })},
+  addUserImageAWS: (id, imageFormData) => {
+    axiosInstance.put(`/users/${id}/awsphoto`, imageFormData, {
+      headers: {
+        'X-Authorization': sessionStorage.getItem("token")
+      }
+    })},
   getUserImage: () => axiosInstance.get(`/users/${sessionStorage.getItem("userId")}/photo`),
   addUserImage: (image) => axiosInstance.put(`/users/${sessionStorage.getItem("userId")}/photo`, image, {
     headers: {

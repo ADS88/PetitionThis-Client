@@ -72,6 +72,7 @@
   import Signatures from "./Signatures";
   import PetitionOwnerActions from "./PetitionOwnerActions";
   import PetitionActions from "./PetitionActions";
+  import awsRootUrl from "../awsRootUrl";
 
   export default {
     name: "FullPetition",
@@ -91,10 +92,10 @@
     },
     computed: {
       imageUrl: function () {
-        return this.rootUrl + "/petitions/" + this.petition.petitionId + "/photo"
+        return `${awsRootUrl}/petition${this.petition.petitionId}.jpg`
       },
       authorImageUrl: function() {
-        return this.rootUrl + "/users/" + this.petition.authorId + "/photo"
+        return `${awsRootUrl}/user${this.petition.authorId}.jpg`
       },
       hasSignedPetition: function () {
         let hasSigned = false;
@@ -105,9 +106,6 @@
           }
         }
         return hasSigned
-      },
-      facebookUrl: function () {
-        return `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`
       },
       createdDate: function() {
         return new Date(this.petition.createdDate).toUTCString()

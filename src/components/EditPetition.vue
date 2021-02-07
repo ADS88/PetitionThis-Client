@@ -52,7 +52,7 @@
               type="file"
               style="display:none"
               ref="fileInput"
-              accept="image/png,image/jpeg,image/gif"
+              accept="image/jpeg"
               @change="onFilePicked">
 
             <div v-if="imageUrl !==''">
@@ -77,6 +77,7 @@
 <script>
   import api from "../api";
   import router from "../routes";
+  import awsRootUrl from "../awsRootUrl";
 
   export default {
     name: "EditPetition",
@@ -84,10 +85,10 @@
     data() {
       return {
         valid: false,
-        imageUrl: api.SERVER_URL + "/petitions/" + this.id + "/photo",
         image: null,
         error: false,
         errorMessage: "",
+        newImageUrl: null,
         petition: {},
         petitionCategories: [],
         nameRules: [
@@ -101,6 +102,14 @@
         ],
       }
     },
+    computed: {
+      imageUrl: function () {
+        if (this.newImageUrl) {
+          return this.newImageUrl
+        }
+        return `${awsRootUrl}/petition${this.petition.petitionId}.jpg`
+      },
+    },
     methods: {
       onFilePicked(event) {
         console.log("file picked")
@@ -111,7 +120,7 @@
         }
         const fileReader = new FileReader()
         fileReader.addEventListener('load', () => {
-          this.imageUrl = fileReader.result
+          this.newImageUrl = fileReader.result
         })
         fileReader.readAsDataURL(files[0])
         this.image = files[0]
@@ -151,7 +160,7 @@
         }
         return categoryId
       },
-      updatePetition() {
+      async updatePetition() {
         if (!this.valid) {
           this.error = true
           this.errorMessage = "Required fields are not filled correctly"
@@ -167,23 +176,21 @@
           editData.closingDate = this.petition.closingDate
         }
 
-        api.editPetition(this.id, editData)
-          .then((response) => {
-            if (this.image !== null) {
-              this.updatePetitionImage()
-            }
-            router.go(-1)
-          })
-          .catch((error) => {
-            console.log(error)
-            this.error = true;
-            this.errorMessage = "Invalid petition entered!"
-          })
+        try {
+          await api.editPetition(this.id, editData)
+          if (this.image !== null) {
+            await this.updatePetitionImage()
+          }
+          router.go(-1)
+        } catch (err) {
+          this.error = true;
+          this.errorMessage = "Invalid petition entered!"
+        }
       },
-      updatePetitionImage() {
-        api.addPetitionImage(this.id, this.image)
-          .catch(error => console.log(error))
-
+      async updatePetitionImage() {
+        const formData = new FormData()
+        formData.append('image', this.image)
+        await api.addPetitionImageAWS(this.id, formData)
       },
 
     },

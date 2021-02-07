@@ -57,7 +57,7 @@
               type="file"
               style="display:none"
               ref="fileInput"
-              accept="image/png,image/jpeg,image/gif"
+              accept="image/jpeg"
               @change="onFilePicked">
 
             <div v-if="imageUrl !==''">
@@ -143,9 +143,9 @@
         this.$refs.fileInput.click()
       },
       registerUser() {
-        if (!this.valid) {
+        if (!this.valid || this.image == null) {
           this.hasError = true
-          this.errorMessage = "Please fill in all required fields"
+          this.errorMessage = "Please fill in all required fields and a photo"
           return
         }
         const user = this.createUser()
@@ -161,8 +161,10 @@
 
 
       },
-      setUserImage() {
-        api.addUserImage(this.image)
+      setUserImage(userId) {
+        const formData = new FormData()
+        formData.append('image', this.image)
+        api.addUserImageAWS(userId, formData)
           .catch(error => console.log(error))
       },
       loginUser() {
@@ -170,13 +172,13 @@
           .then((response) => {
             sessionStorage.setItem('token', response.data.token)
             sessionStorage.setItem('userId', response.data.userId)
+            router.push('/')
 
             let payload = {'token': response.data.token, 'userId': response.data.userId}
             store.dispatch('login', payload).then()
-            if (this.image !== null) {
-              this.setUserImage()
+            {
+              this.setUserImage(response.data.userId)
             }
-            router.push('/')
           })
       }
     }
