@@ -24,15 +24,9 @@
 
     <div v-else>
       <br>
-      <v-layout justify-center>
-        <h1>Loading Petitions</h1>
-      </v-layout>
-      <v-layout justify-center>
-        <h3>This will take around 10s</h3>
-      </v-layout>
-      <v-layout justify-center>
-        <p>(As this website is hosted on a free tier of Heroku the server needs to start each time)</p>
-      </v-layout>
+      <v-layout justify-center> <h1>Loading Petitions</h1> </v-layout>
+      <v-layout justify-center> <h3>This will take around 10s</h3> </v-layout>
+      <v-layout justify-center><p>(As this website is hosted on a free tier of Heroku the server needs to start each time)</p> </v-layout>
       <br>
       <v-layout justify-center>
         <v-progress-circular
@@ -96,8 +90,7 @@
     },
 
     mounted() {
-      window.setTimeout(this.getPetitions, 10000)
-      //this.getPetitions()
+      this.getPetitions()
     },
   }
 </script>
