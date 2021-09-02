@@ -1,7 +1,23 @@
 <template>
   <div>
 
-    <div v-if="visiblePetitions.length > 0">
+    <div v-if="loading">
+      <br>
+      <v-layout justify-center> <h1>Loading Petitions</h1> </v-layout>
+      <v-layout justify-center> <h3>This will take around 10s</h3> </v-layout>
+      <v-layout justify-center><p>(As this website is hosted on a free tier of Heroku the server needs to start each time)</p> </v-layout>
+      <br>
+      <v-layout justify-center>
+        <v-progress-circular
+          indeterminate
+          color="green"
+          :size="200"
+        ></v-progress-circular>
+      </v-layout>
+
+    </div>
+
+    <div v-else>
       <FilterMenu v-on:updatePetitions="searchPetitions"></FilterMenu>
       <div v-for="petition in visiblePetitions" v-bind:key="petition.petitionId"
            @click="openDetailedPetition(petition.petitionId)">
@@ -22,21 +38,6 @@
       </v-pagination>
     </div>
 
-    <div v-else>
-      <br>
-      <v-layout justify-center> <h1>Loading Petitions</h1> </v-layout>
-      <v-layout justify-center> <h3>This will take around 10s</h3> </v-layout>
-      <v-layout justify-center><p>(As this website is hosted on a free tier of Heroku the server needs to start each time)</p> </v-layout>
-      <br>
-      <v-layout justify-center>
-        <v-progress-circular
-          indeterminate
-          color="green"
-          :size="200"
-        ></v-progress-circular>
-      </v-layout>
-
-    </div>
   </div>
 </template>
 
@@ -69,12 +70,16 @@
         prevIcons: ['mdi-chevron-left', 'mdi-arrow-left', 'mdi-menu-left'],
         currentPage: 1,
         totalVisible: 10,
+        loading: true,
       }
     },
     methods: {
       getPetitions() {
         api.getPetitions()
-          .then(response => this.allPetitions = response.data)
+          .then(response => {
+            this.allPetitions = response.data
+            this.loading = false
+          })
           .catch(error => console.log(error))
       },
       searchPetitions(params) {
